@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './styles/App.css';
 import Home from './pages/Home';
+import ViewGoals from "./pages/ViewGoals";
 import  Header from './components/Header';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home/>} />
                     <Route path="/home" element={<Home/>} />
+                    <Route path ="/view_goals" element={<ViewGoals/>} />
                 </Routes>
             </BrowserRouter>
         </>
