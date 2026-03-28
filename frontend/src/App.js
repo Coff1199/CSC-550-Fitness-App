@@ -1,21 +1,22 @@
-import React, {useEffect, useState} from "react";
-import axios from "axios";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import './styles/App.css';
+import Home from './pages/Home';
+import  Header from './components/Header';
 
 function App() {
-    const [message, setMessage] = useState("");
-
-    useEffect(() => {
-        axios.get("http://localhost:5000/api/message")
-        .then(res => setMessage(res.data.message))
-        .catch(err => console.error(err));
-    }, []);
+    // npm start to run in frontend folder
 
     return (
-        <div>
-            <h1>Message from Flask:</h1>
-            <p>{message}</p>
-        </div>
-    ) // test
+        <>
+            <BrowserRouter>
+                <Header />
+                <Routes>
+                    <Route path="/" element={<Home/>} />
+                    <Route path="/home" element={<Home/>} />
+                </Routes>
+            </BrowserRouter>
+        </>
+    ) 
 }
 
 export default App;
