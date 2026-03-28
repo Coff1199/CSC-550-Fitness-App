@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
+# start backend with in terminal in backend directory using 'python app.py'
 app = Flask(__name__)
 CORS(app)
 @app.route("/api/message")
