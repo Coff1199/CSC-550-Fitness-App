@@ -2,8 +2,9 @@ import NavItems from './NavItems';
 import '../styles/header.css'
 
 const navigation = [
-    {name: 'Home', href: '/home'}
-    // format {name: 'test', href: '/test'}
+    {name: 'Home', path: '/home'},
+        {name: 'View Goals', path: "/view_goals"}
+    // format {name: 'test', path: '/test'}
 ]
 
 export default function Header(props) {
