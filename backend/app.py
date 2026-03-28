@@ -3,20 +3,16 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
+from routes.goals import goals_bp
+from db import db_bp
 
-# start backend with in terminal in backend directory using 'python app.py'
+# start backend in terminal in backend directory using 'python app.py'
 app = Flask(__name__)
 CORS(app)
-@app.route("/api/message")
-def home():
-    return jsonify({"message":"running..."})
 
-load_dotenv()
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-
-engine = create_engine(os.getenv("DATABASE_URL"))
-conn = engine.connect()
-print("Connected to DB")
+# register your blueprints
+app.register_blueprint(goals_bp)
+app.register_blueprint(db_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
