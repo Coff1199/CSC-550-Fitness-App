@@ -35,14 +35,15 @@ def login():
         password = data['password']
         
         # Query user by email
-        query = text('SELECT id, name, email, password_hash FROM "Users" WHERE email = :email;')
+        query = text('SELECT id, firstname, lastname, email, password FROM "Users" WHERE email = :email;')
         result = conn.execute(query, {"email": email}).fetchone()
-        
+
         # Check if user exists
         if not result:
             return jsonify({'error': 'Invalid email or password'}), 401
-        
-        user_id, name, user_email, password_hash = result
+
+        user_id, firstname, lastname, user_email, password_hash = result
+        name = f"{firstname} {lastname}"
         
         # Verify password
         if not check_password_hash(password_hash, password):
