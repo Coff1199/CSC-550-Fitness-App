@@ -12,14 +12,17 @@ function AddGoal(props) {
 
     return (
         <>
-            <button className="add-goal-btn" onClick={()=> handleShow}>
+            <button className="add-goal-btn" onClick={handleShow}>
                 Add Goal
             </button>
             {show && (
                 <div className="modal-overlay">
                     <div className="modal">
                         <form onSubmit=''>
-                            
+                            <p>Test</p>
+                            <button className="close-btn" onClick={handleClose}>
+                            Close
+                            </button>
                         </form>
                     </div>
                 </div>
