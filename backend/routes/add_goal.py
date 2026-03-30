@@ -37,8 +37,6 @@ def create_goal():
     if len(goal_desc) > 255:
         return jsonify({"error": "Too long"}), 400
 
-    db = SessionLocal()
-
     try:
         # create a new goal
         new_goal = Goal(
@@ -47,6 +45,9 @@ def create_goal():
             userid=user_id,
             enddate=datetime.strptime(end_date, "%Y-%m-%d") if end_date else None
         )
+
+        # connect to session
+        db = SessionLocal()
 
         # add to the database
         db.add(new_goal)

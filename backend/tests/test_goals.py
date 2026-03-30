@@ -13,7 +13,6 @@ def client():
     with app.test_client() as client:
         yield client
 
-
 def test_view_goals_status(client):
     """
     Tests whether api can be reached
