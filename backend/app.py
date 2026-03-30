@@ -21,7 +21,7 @@ app.config['SESSION_PERMANENT'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 
 # Configure CORS to allow credentials (needed for sessions/cookies)
-CORS(app, supports_credentials=True, origins=['http://localhost:3000'])
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
 # register your blueprints
 app.register_blueprint(goals_bp)
@@ -29,4 +29,4 @@ app.register_blueprint(auth_bp)  # NEW: Register auth blueprint
 app.register_blueprint(db_bp)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
