@@ -1,17 +1,31 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, session
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from routes.goals import goals_bp
+from routes.auth import auth_bp  # NEW: Import auth blueprint
 from db import db_bp
+from datetime import timedelta
+
+# Load environment variables
+load_dotenv()
 
 # start backend in terminal in backend directory using 'python app.py'
 app = Flask(__name__)
-CORS(app)
+
+# NEW: Configure session for login/logout
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_PERMANENT'] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
+
+# Configure CORS to allow credentials (needed for sessions/cookies)
+CORS(app, supports_credentials=True, origins=['http://localhost:3000'])
 
 # register your blueprints
 app.register_blueprint(goals_bp)
+app.register_blueprint(auth_bp)  # NEW: Register auth blueprint
 app.register_blueprint(db_bp)
 
 if __name__ == "__main__":
