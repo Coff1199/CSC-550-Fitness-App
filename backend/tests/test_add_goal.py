@@ -36,10 +36,7 @@ def test_add_goal_missing_required_fields(client):
     """
     Should fail if required fields are missing
     """
-    payload = {
-        "goalDesc": "No name",
-        "userId": 1
-    }
+    payload = { "goalDesc": "No name", "userId": 1 }
 
     response = client.post("/api/add_goal", json=payload)
 
