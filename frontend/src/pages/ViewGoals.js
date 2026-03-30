@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import GoalItem from '../components/GoalItem'
 // import the components for editing, deleting, or adding goals
+import AddGoal from '../components/AddGoal'
 import '../styles/goals.css';
 
 export default function ViewGoals()
@@ -36,7 +37,7 @@ export default function ViewGoals()
                 </div>
                 </div>
 
-                <button className="add-goal-btn">Add Goal</button>
+                <AddGoal />
             </div>
         </>
     );
