@@ -9,10 +9,6 @@ def client():
 
 
 def test_register_success(client):
-    """
-    Test Case 1 - Normal: Valid inputs should create an account
-    and return 201.
-    """
     payload = {
         "firstname": "John",
         "lastname": "Doe",
@@ -20,11 +16,14 @@ def test_register_success(client):
         "password": "SecurePass123!"
     }
     response = client.post("/api/register", json=payload)
-    # Accept 201 (created) or 409 (if this email was already used in a prior test run)
-    assert response.status_code in [201, 409]
-    data = response.get_json()
-    if response.status_code == 201:
-        assert data["message"] == "Account created successfully"
+    assert response.status_code == 201
+    assert response.get_json()["message"] == "Account created successfully"
+
+    # Teardown: remove the test user so the test can run again cleanly
+    from db import conn
+    from sqlalchemy import text
+    conn.execute(text('DELETE FROM "Users" WHERE email = :email'), {"email": "newuser_test@example.com"})
+    conn.commit()
 
 
 def test_register_duplicate_email(client):
