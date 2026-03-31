@@ -1,4 +1,6 @@
 import NavItems from './NavItems';
+import LogoutButton from './LogoutButton';
+import { useAuth } from '../context/AuthContext';
 import '../styles/header.css'
 
 const navigation = [
@@ -8,6 +10,8 @@ const navigation = [
 ]
 
 export default function Header(props) {
+    const { isAuthenticated } = useAuth();
+
     return (
         //website header
         <>
@@ -21,6 +25,7 @@ export default function Header(props) {
                     />
                 ))}
             </nav>
+            {isAuthenticated && <LogoutButton />}
         </header>
         </>
     );
