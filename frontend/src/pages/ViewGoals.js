@@ -6,7 +6,9 @@ import AddGoal from '../components/AddGoal'
 import '../styles/goals.css';
 
 export default function ViewGoals()
-// function that displays the users goals from the database
+/*
+Component for view goals page
+*/
 {
     const [goals, setGoals] = useState([]);
 
