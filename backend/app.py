@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from routes.goals import goals_bp
+from routes.add_goal import add_goal_bp
 from db import db_bp
 
 # start backend in terminal in backend directory using 'python app.py'
@@ -12,6 +13,7 @@ CORS(app)
 
 # register your blueprints
 app.register_blueprint(goals_bp)
+app.register_blueprint(add_goal_bp)
 app.register_blueprint(db_bp)
 
 if __name__ == "__main__":

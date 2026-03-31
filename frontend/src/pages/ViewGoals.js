@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import GoalItem from '../components/GoalItem'
 // import the components for editing, deleting, or adding goals
+import AddGoal from '../components/AddGoal'
 import '../styles/goals.css';
 
 export default function ViewGoals()
@@ -10,10 +11,13 @@ export default function ViewGoals()
     const [goals, setGoals] = useState([]);
 
     // access api and get the goals
-    useEffect(() => {
+    const fetchGoals = () => {
         axios.get("http://localhost:5000/api/view_goals")
         .then(res => setGoals(res.data))
         .catch(err => console.error(err));
+    }
+    useEffect(() => {
+        fetchGoals();
     }, []);
 
     return (
@@ -36,7 +40,10 @@ export default function ViewGoals()
                 </div>
                 </div>
 
-                <button className="add-goal-btn">Add Goal</button>
+                <AddGoal 
+                    userId={1}
+                    onGoalAdded={fetchGoals}
+                />
             </div>
         </>
     );
