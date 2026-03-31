@@ -12,8 +12,12 @@ def get_goals():
     Function for getting the goals from the databse
     :returns: jsonify(goals): the goals as jsosn
     """
-    query = text('SELECT * FROM "Goals";')
-    result = conn.execute(query)
+    try:
+        query = text('SELECT * FROM "Goals";')
+        result = conn.execute(query)
 
-    goals = [dict(row._mapping) for row in result]
-    return jsonify(goals)
+        goals = [dict(row._mapping) for row in result]
+        return jsonify(goals)
+    except Exception as e:
+        conn.rollback()  
+        return jsonify({"error": str(e)}), 500

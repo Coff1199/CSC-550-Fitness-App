@@ -14,14 +14,17 @@ def create_goal():
     """
     data = request.get_json()
 
+    if not data:
+        return jsonify({"error": "Invalid JSON"}), 400
+
     # get data from request
     goal_name = data.get("goalName")
-    goal_desc = data.get("goalDesc")
+    goal_desc = data.get("goalDesc", "")
     user_id = data.get("userId")
     end_date = data.get("endDate")
 
     # check data exists
-    if not goal_name or not user_id:
+    if goal_name is None or user_id is None:
         return jsonify({"error": "goal_name and user_id are required"}), 400
     
     # validate data
