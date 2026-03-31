@@ -3,6 +3,9 @@ import axios from "axios";
 import '../styles/home.css'
 
 export default function Home() {
+    /* 
+    Component for home page
+    */
     const [message, setMessage] = useState("");
 
     // get message from backend

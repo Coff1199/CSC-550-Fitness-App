@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../utils/api';
 
 export default function RegisterPage() {
+    /*
+    Component for registration page
+    */
     const navigate = useNavigate();
 
     const [firstname, setFirstname] = useState('');
