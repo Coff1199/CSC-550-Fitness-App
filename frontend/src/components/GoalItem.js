@@ -10,7 +10,7 @@ export default function GoalItem(properties) {
         <>
             <div className="goal-item">
             <h2>{properties.goalName}</h2>
-            <p>{properties.goalDesc}r</p>
+            <p>{properties.goalDesc}</p>
                 <div className="goal-actions">
                     {
                         // TODO: add any aadditional componenets for edit and delete
