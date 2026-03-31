@@ -1,34 +1,35 @@
 import React, { useState } from 'react';
-import { useNavigate, Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../utils/api';
 
-export default function LoginPage() {
-    const { login, isAuthenticated, loading: authLoading } = useAuth();
+export default function RegisterPage() {
     const navigate = useNavigate();
-    const location = useLocation();
 
+    const [firstname, setFirstname] = useState('');
+    const [lastname, setLastname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
-    const successMessage = location.state?.message || '';
-
-    if (authLoading) {
-        return null;
-    }
-
-    if (isAuthenticated) {
-        return <Navigate to="/" replace />;
-    }
-
     async function handleSubmit(e) {
         e.preventDefault();
         setError('');
+
+        // Client-side validation
+        if (!firstname || !lastname || !email || !password) {
+            setError('All fields are required');
+            return;
+        }
+        if (!email.includes('@') || !email.includes('.')) {
+            setError('Invalid email format');
+            return;
+        }
+
         setSubmitting(true);
         try {
-            await login(email, password);
-            navigate('/');
+            await registerUser(firstname, lastname, email, password);
+            navigate('/login', { state: { message: 'Account created! Please sign in.' } });
         } catch (err) {
             setError(err.message);
         } finally {
@@ -39,17 +40,33 @@ export default function LoginPage() {
     return (
         <div style={styles.page}>
             <div style={styles.card}>
-                <h1 style={styles.title}>Sign In</h1>
-
-                {successMessage && (
-                    <p style={styles.success}>{successMessage}</p>
-                )}
+                <h1 style={styles.title}>Create Account</h1>
 
                 {error && (
                     <p style={styles.error}>{error}</p>
                 )}
 
                 <form onSubmit={handleSubmit} style={styles.form}>
+                    <label style={styles.label}>First Name</label>
+                    <input
+                        type="text"
+                        value={firstname}
+                        onChange={e => setFirstname(e.target.value)}
+                        required
+                        style={styles.input}
+                        autoComplete="given-name"
+                    />
+
+                    <label style={styles.label}>Last Name</label>
+                    <input
+                        type="text"
+                        value={lastname}
+                        onChange={e => setLastname(e.target.value)}
+                        required
+                        style={styles.input}
+                        autoComplete="family-name"
+                    />
+
                     <label style={styles.label}>Email</label>
                     <input
                         type="email"
@@ -67,18 +84,18 @@ export default function LoginPage() {
                         onChange={e => setPassword(e.target.value)}
                         required
                         style={styles.input}
-                        autoComplete="current-password"
+                        autoComplete="new-password"
                     />
 
                     <button type="submit" disabled={submitting} style={styles.button}>
-                        {submitting ? 'Signing in...' : 'Sign In'}
+                        {submitting ? 'Creating account...' : 'Create Account'}
                     </button>
                 </form>
 
                 <p style={styles.footer}>
-                    Don't have an account?{' '}
-                    <span style={styles.link} onClick={() => navigate('/register')}>
-                        Create one
+                    Already have an account?{' '}
+                    <span style={styles.link} onClick={() => navigate('/login')}>
+                        Sign in
                     </span>
                 </p>
             </div>
@@ -137,14 +154,16 @@ const styles = {
         fontSize: '16px',
         outline: 'none',
     },
-    success: {
-        color: '#22c55e',
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-        border: '1px solid #22c55e',
-        borderRadius: '6px',
-        padding: '10px 14px',
-        marginBottom: '16px',
-        fontSize: '14px',
+    button: {
+        marginTop: '8px',
+        padding: '10px 18px',
+        backgroundColor: '#60a5fa',
+        color: '#ffffff',
+        border: 'none',
+        borderRadius: '8px',
+        fontSize: '16px',
+        fontWeight: '500',
+        cursor: 'pointer',
     },
     footer: {
         marginTop: '20px',
@@ -156,16 +175,5 @@ const styles = {
         color: '#60a5fa',
         cursor: 'pointer',
         fontWeight: '500',
-    },
-    button: {
-        marginTop: '8px',
-        padding: '10px 18px',
-        backgroundColor: '#60a5fa',
-        color: '#ffffff',
-        border: 'none',
-        borderRadius: '8px',
-        fontSize: '16px',
-        fontWeight: '500',
-        cursor: 'pointer',
     },
 };

@@ -29,6 +29,19 @@ export async function logoutUser() {
     return response.json();
 }
 
+export async function registerUser(firstname, lastname, email, password) {
+    const response = await fetch(`${BASE_URL}/api/register`, {
+        method: 'POST',
+        ...defaultOptions,
+        body: JSON.stringify({ firstname, lastname, email, password }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+    }
+    return data;
+}
+
 export async function checkAuthStatus() {
     const response = await fetch(`${BASE_URL}/api/check-auth`, {
         method: 'GET',

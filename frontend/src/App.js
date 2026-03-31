@@ -4,6 +4,7 @@ import Home from './pages/home';
 import ViewGoals from "./pages/ViewGoals";
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 function ProtectedRoute({ children }) {
@@ -30,6 +31,7 @@ function App() {
                     <Header />
                     <Routes>
                         <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
                         <Route path="/" element={
                             <ProtectedRoute><Home /></ProtectedRoute>
                         } />
