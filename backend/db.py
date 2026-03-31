@@ -28,4 +28,4 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # base class for models
 Base = declarative_base()
 
-print("✅ Connected to DB")
+print("Connected to DB")

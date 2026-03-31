@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Text, Date, DateTime
-from sqlalchemy.sql import func
 from db import Base
+from datetime import datetime, timezone
+
 
 class Goal(Base):
     """
@@ -12,9 +13,8 @@ class Goal(Base):
     goalname = Column(Text, nullable=False)
     goaldesc = Column(Text)
 
-    creationdate = Column(DateTime(timezone=True), server_default=func.now())
-    lastupdated = Column(DateTime(timezone=True), onupdate=func.now())
-
+    creationdate = Column(DateTime, default=datetime.now(timezone.utc)) 
+    lastupdated = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.utcnow) 
     enddate = Column(Date)
 
     userid = Column(Integer, nullable=False)

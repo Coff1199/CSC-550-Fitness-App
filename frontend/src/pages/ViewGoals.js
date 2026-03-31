@@ -11,10 +11,13 @@ export default function ViewGoals()
     const [goals, setGoals] = useState([]);
 
     // access api and get the goals
-    useEffect(() => {
+    const fetchGoals = () => {
         axios.get("http://localhost:5000/api/view_goals")
         .then(res => setGoals(res.data))
         .catch(err => console.error(err));
+    }
+    useEffect(() => {
+        fetchGoals();
     }, []);
 
     return (
@@ -37,7 +40,10 @@ export default function ViewGoals()
                 </div>
                 </div>
 
-                <AddGoal />
+                <AddGoal 
+                    userId={1}
+                    onGoalAdded={fetchGoals}
+                />
             </div>
         </>
     );
