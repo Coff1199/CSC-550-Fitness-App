@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import './styles/App.css';
-import Home from './pages/home';
+import Home from './pages/Home';
 import ViewGoals from "./pages/ViewGoals";
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
