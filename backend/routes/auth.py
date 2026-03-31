@@ -107,7 +107,7 @@ def register():
         check_query = text('SELECT id FROM "Users" WHERE email = :email;')
         existing = conn.execute(check_query, {"email": email}).fetchone()
         if existing:
-            return jsonify({'error': 'Email already in use'}), 409
+            return jsonify({'error': 'An account with the following email already exists'}), 409
 
         # Hash password and insert new user
         hashed_password = generate_password_hash(password)
