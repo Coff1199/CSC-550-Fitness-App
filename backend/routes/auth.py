@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, session
 from sqlalchemy import text
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from db import conn
 
 # Create auth blueprint
@@ -65,6 +65,68 @@ def login():
         
     except Exception as e:
         print(f"Login error: {str(e)}")
+        return jsonify({'error': 'Server error occurred'}), 500
+
+
+@auth_bp.route('/api/register', methods=["POST"])
+def register():
+    """
+    Register a new user
+
+    Request body:
+        {
+            "firstname": "John",
+            "lastname": "Doe",
+            "email": "john@example.com",
+            "password": "securePassword123"
+        }
+
+    Returns:
+        201: Account created successfully
+        400: Missing or invalid fields
+        409: Email already in use
+        500: Server error
+    """
+    try:
+        data = request.get_json()
+
+        # Validate all fields present
+        if not all([data.get('firstname'), data.get('lastname'), data.get('email'), data.get('password')]):
+            return jsonify({'error': 'All fields are required'}), 400
+
+        firstname = data['firstname'].strip()
+        lastname = data['lastname'].strip()
+        email = data['email'].strip().lower()
+        password = data['password']
+
+        # Basic email format check
+        if '@' not in email or '.' not in email:
+            return jsonify({'error': 'Invalid email format'}), 400
+
+        # Check for duplicate email
+        check_query = text('SELECT id FROM "Users" WHERE email = :email;')
+        existing = conn.execute(check_query, {"email": email}).fetchone()
+        if existing:
+            return jsonify({'error': 'Email already in use'}), 409
+
+        # Hash password and insert new user
+        hashed_password = generate_password_hash(password)
+        insert_query = text(
+            'INSERT INTO "Users" (firstname, lastname, email, password, creationdate) '
+            'VALUES (:firstname, :lastname, :email, :password, NOW());'
+        )
+        conn.execute(insert_query, {
+            "firstname": firstname,
+            "lastname": lastname,
+            "email": email,
+            "password": hashed_password
+        })
+        conn.commit()
+
+        return jsonify({'message': 'Account created successfully'}), 201
+
+    except Exception as e:
+        print(f"Register error: {str(e)}")
         return jsonify({'error': 'Server error occurred'}), 500
 
 
