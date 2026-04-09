@@ -16,10 +16,9 @@ def get_goals():
         # check user logged in
         if 'user_id' not in session:
             return jsonify({'error': 'Unauthorized'}), 401
+        
         # get current user id from session
         user_id = session['user_id']
-        print("SESSION USER ID:", user_id, type(user_id))
-
         user_id = int(user_id)
 
         # query
