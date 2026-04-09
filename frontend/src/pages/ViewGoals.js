@@ -14,7 +14,9 @@ Component for view goals page
 
     // access api and get the goals
     const fetchGoals = () => {
-        axios.get("http://localhost:5000/api/view_goals")
+        axios.get("http://localhost:5000/api/view_goals", {
+            withCredentials: true
+        })
         .then(res => setGoals(res.data))
         .catch(err => console.error(err));
     }
