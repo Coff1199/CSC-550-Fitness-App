@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from db import SessionLocal
 from models.goal import Goal
 from datetime import datetime
@@ -20,8 +20,15 @@ def create_goal():
     # get data from request
     goal_name = data.get("goalName")
     goal_desc = data.get("goalDesc", "")
-    user_id = data.get("userId")
     end_date = data.get("endDate")
+
+    # check user logged in
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    # get current user id from session
+    user_id = session['user_id']
+    user_id = int(user_id)
 
     # check data exists
     if goal_name is None or user_id is None:
