@@ -5,11 +5,18 @@
 /.pnp
 .pnp.js
 
+# pychaches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 # testing
 /coverage
 
 # production
-/build
+dist/
+build/
 
 # misc
 # backend/ .env
