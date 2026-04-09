@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, session
 from sqlalchemy import text
 from db import conn
 
@@ -13,8 +13,18 @@ def get_goals():
     :returns: jsonify(goals): the goals as jsosn
     """
     try:
-        query = text('SELECT * FROM "Goals";')
-        result = conn.execute(query)
+        # check user logged in
+        if 'user_id' not in session:
+            return jsonify({'error': 'Unauthorized'}), 401
+        # get current user id from session
+        user_id = session['user_id']
+        print("SESSION USER ID:", user_id, type(user_id))
+
+        user_id = int(user_id)
+
+        # query
+        query = text('SELECT * FROM "Goals" WHERE userid = :userid;')
+        result = conn.execute(query,{"userid": user_id}).fetchall()
 
         goals = [dict(row._mapping) for row in result]
         return jsonify(goals)
