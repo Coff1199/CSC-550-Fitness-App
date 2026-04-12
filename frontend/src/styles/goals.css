@@ -3,6 +3,7 @@
   --bg: #0f172a;
   --card-bg: #1e293b;
   --goal-bg: #111827;
+  --neutral: #64748b;
   --primary: #3b82f6;
   --primary-hover: #2563eb;
   --danger: #ef4444;
@@ -126,6 +127,18 @@ button {
   background: var(--danger-hover);
 }
 
+.submit-btn {
+  background: var(--neutral);
+  color: white;
+  padding: 10px 18px;
+  font-weight: 500;
+}
+
+.submit-btn:hover,
+.submit-btn:active {
+  background: var(--primary-hover);
+}
+
 /* ===== MODAL ===== */
 .modal-overlay {
   position: fixed;
@@ -134,7 +147,6 @@ button {
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.5);
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -145,6 +157,8 @@ button {
   padding: 20px;
   border-radius: 10px;
   width: 300px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  animation: fadeIn 0.2s ease;
 }
 
 .add-goal-form {
@@ -210,5 +224,17 @@ button {
 
   .goals-title {
     font-size: 1.4rem;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

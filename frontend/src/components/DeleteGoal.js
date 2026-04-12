@@ -7,19 +7,8 @@ function DeleteGoal(props) {
     returns: nothing
     */
 
-    const [show, setShow] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-
-    const handleClose = () => {
-        setShow(false);
-        setError('');
-    }
-    const handleShow = () => {
-        setShow(true);
-        setSuccess('');
-        setError('');
-    };
 
     const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,10 +35,7 @@ function DeleteGoal(props) {
         setSuccess('Goal deleted successfully!');
         setError('');
 
-        if (props.onGoalDeleted) {
-            props.onGoalDeleted(data);
-        }
-
+        props.onGoalDeleted();
     } catch (err) {
         setError(err.message);
     }
@@ -57,51 +43,45 @@ function DeleteGoal(props) {
 
     return (
         <>
-            <button className="delete-btn" onClick={handleShow}>
-                Delete Goal
-            </button>
-            {show && (
-                <div className="modal-overlay">
-                    <div className="modal">
-                        {success && (
-                            <>
-                                <p className="success-message">{success}</p>
-                                <button className="close-btn" onClick={handleClose}>Close</button>
-                            </>
+            <div className="modal-overlay">
+                <div className="modal">
+                    {success && (
+                        <>
+                            <p className="success-message">{success}</p>
+                            <button className="close-btn" onClick={props.onClose}>Close</button>
+                        </>
+                    )}
+                    {!success && (<form
+                        className="delete-goal-form"
+                        onSubmit={handleSubmit}
+                    >
+                        <h2 className="form-title">Delete Goal</h2>
+
+                        {error && (
+                            <p className="error-message">{error}</p>
                         )}
-                        {!success && (<form
-                            className="delete-goal-form"
-                            onSubmit={handleSubmit}
-                        >
-                            <h2 className="form-title">Delete Goal</h2>
+                        <h3>Are you sure you want to delete this goal?</h3>
 
-                            {error && (
-                                <p className="error-message">{error}</p>
-                            )}
-                            <h3>Are you sure you want to delete this goal?</h3>
+                        <div className="form-buttons">
+                            <button
+                                type="submit"
+                                className="submit-btn"
+                            >
+                                Delete Permanently 
+                            </button>
 
-                            <div className="form-buttons">
-                                <button
-                                    type="submit"
-                                    className="submit-btn"
-                                >
-                                    Delete Permanently 
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="close-btn"
-                                    onClick={handleClose}
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </form>
-                        )}
-                    </div>
+                            <button
+                                type="button"
+                                className="close-btn"
+                                onClick={props.onClose}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </form>
+                    )}
                 </div>
-            )}
-        
+            </div>
         </>
   );
 }
