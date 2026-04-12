@@ -16,7 +16,12 @@ export default function GoalItem(properties) {
                         // TODO: add any aadditional componenets for edit and delete
                     }
                     <button className="edit-btn">Edit temp</button>
-                    <button className="delete-btn">Delete temp</button>
+                    <button 
+                        className="delete-btn"
+                        onClick={properties.onDeleteClick}
+                    >
+                        Delete Goal
+                    </button>
                 </div>
             </div>
         </>
