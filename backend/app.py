@@ -9,6 +9,9 @@ from routes.add_goal import add_goal_bp
 from routes.delete_goal import delete_goal_bp
 from db import db_bp
 from datetime import timedelta
+from routes.dashboard import dashboard_bp
+from models.workout import Workout
+from db import Base, engine
 
 # Load environment variables
 load_dotenv()
@@ -29,7 +32,9 @@ CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_
 app.register_blueprint(goals_bp)
 app.register_blueprint(auth_bp)  # NEW: Register auth blueprint
 app.register_blueprint(add_goal_bp)
+app.register_blueprint(dashboard_bp)
 app.register_blueprint(db_bp)
+Base.metadata.create_all(engine)
 app.register_blueprint(delete_goal_bp)
 
 if __name__ == "__main__":
