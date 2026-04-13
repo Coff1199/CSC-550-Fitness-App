@@ -17,6 +17,8 @@ def test_view_goals_status(client):
     """
     Tests whether api can be reached
     """
+    with client.session_transaction() as sess:
+        sess["user_id"] = 1
     response = client.get("/api/view_goals")
     assert response.status_code == 200
 
@@ -24,6 +26,8 @@ def test_goals_returns_list(client):
     """
     Checks that response is a list
     """
+    with client.session_transaction() as sess:
+        sess["user_id"] = 1
     response = client.get("/api/view_goals")
     data = response.get_json()
     assert isinstance(data, list)
@@ -32,6 +36,9 @@ def test_goal_structure(client):
     """
     Tests that the returned goals are in the correct format
     """
+    with client.session_transaction() as sess:
+        sess["user_id"] = 1
+
     response = client.get("/api/view_goals")
     data = response.get_json()
 
@@ -48,6 +55,8 @@ def test_api_not_crashing(client):
     """
     Tests that the api has not crashed
     """
+    with client.session_transaction() as sess:
+        sess["user_id"] = 1
     response = client.get("api/view_goals")
     assert response.data is not None
 

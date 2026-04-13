@@ -19,7 +19,8 @@ def test_add_goal_success(client):
         "userId": 1,
         "endDate": "2026-05-01"
     }
-
+    with client.session_transaction() as sess:
+        sess["user_id"] = 1
     response = client.post("/api/add_goal", json=payload)
 
     assert response.status_code == 201
@@ -38,6 +39,8 @@ def test_add_goal_missing_required_fields(client):
     """
     payload = { "goalDesc": "No name", "userId": 1 }
 
+    with client.session_transaction() as sess:
+        sess["user_id"] = 1
     response = client.post("/api/add_goal", json=payload)
 
     assert response.status_code == 400
@@ -56,6 +59,9 @@ def test_add_goal_invalid_types(client):
         "userId": 1
     }
 
+    with client.session_transaction() as sess:
+        sess["user_id"] = 1
+        
     response = client.post("/api/add_goal", json=payload)
 
     assert response.status_code == 400
@@ -70,6 +76,8 @@ def test_add_goal_name_too_long(client):
         "goalDesc": "Test",
         "userId": 1
     }
+    with client.session_transaction() as sess:
+        sess["user_id"] = 1
 
     response = client.post("/api/add_goal", json=payload)
 
