@@ -1,32 +1,47 @@
-import NavItems from './NavItems';
-import LogoutButton from './LogoutButton';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import '../styles/header.css'
 
-const navigation = [
-    {name: 'Home', path: '/home'},
-        {name: 'View Goals', path: "/view_goals"}
-    // format {name: 'test', path: '/test'}
-]
+const Header = () => {
+  const { isAuthenticated, logout } = useAuth();
 
-export default function Header(props) {
-    const { isAuthenticated } = useAuth();
+  return (
+    <header style={{ 
+      backgroundColor: '#1f2937', 
+      padding: '1rem 2rem',
+      borderBottom: '1px solid #374151'
+    }}>
+      <nav style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center' 
+      }}>
+        <div style={{ display: 'flex', gap: '2rem' }}>
+          {isAuthenticated && (
+            <>
+              <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
+              <Link to="/view_goals" style={{ color: '#fff', textDecoration: 'none' }}>View Goals</Link>
+            </>
+          )}
+        </div>
+        {isAuthenticated && (
+          <button 
+            onClick={logout}
+            style={{
+              backgroundColor: '#ef4444',
+              color: '#fff',
+              padding: '0.5rem 1rem',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Logout
+          </button>
+        )}
+      </nav>
+    </header>
+  );
+};
 
-    return (
-        //website header
-        <>
-        <header className="header">
-            <nav className='nav'>
-                {navigation.map((link) => (
-                    <NavItems
-                        key={link.path}
-                        name={link.name}
-                        path={link.path}
-                    />
-                ))}
-            </nav>
-            {isAuthenticated && <LogoutButton />}
-        </header>
-        </>
-    );
-}
+export default Header;
