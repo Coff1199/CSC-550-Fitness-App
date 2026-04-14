@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const DashboardPage = () => {
@@ -47,6 +48,19 @@ const DashboardPage = () => {
   return (
     <div style={{ padding: '2rem', minHeight: '100vh', backgroundColor: '#111827' }}>
       <h1 style={{ color: '#fff', marginBottom: '2rem' }}>Progress Dashboard</h1>
+
+      <Link to="/log_workout" style={{
+        display: 'inline-block',
+        marginBottom: '1.5rem',
+        padding: '0.75rem 1.5rem',
+        backgroundColor: '#3b82f6',
+        color: '#fff',
+        borderRadius: '8px',
+        textDecoration: 'none',
+        fontWeight: 'bold'
+      }}>
+        + Log Workout
+      </Link>
       
       {/* Metric Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
