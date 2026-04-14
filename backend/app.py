@@ -7,6 +7,8 @@ from routes.goals import goals_bp
 from routes.auth import auth_bp  
 from routes.add_goal import add_goal_bp
 from routes.delete_goal import delete_goal_bp
+from routes.dashboard import dashboard_bp
+from routes.log_workout import log_workout_bp
 from routes.edit_goal import edit_goal_bp
 from routes.dashboard import dashboard_bp
 from routes.log_workout import log_workout_bp
@@ -36,6 +38,8 @@ app.register_blueprint(db_bp)
 app.register_blueprint(delete_goal_bp)
 app.register_blueprint(edit_goal_bp)
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(delete_goal_bp)
+app.register_blueprint(edit_goal_bp)
 app.register_blueprint(log_workout_bp)
 
 if __name__ == "__main__":
