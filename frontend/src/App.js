@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import LogWorkoutPage from './pages/LogWorkoutPage';
 
 // ProtectedRoute component defined here
 function ProtectedRoute({ children }) {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/view_goals" element={<ProtectedRoute><ViewGoals /></ProtectedRoute>} />
+          <Route path="/log_workout" element={<ProtectedRoute><LogWorkoutPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
