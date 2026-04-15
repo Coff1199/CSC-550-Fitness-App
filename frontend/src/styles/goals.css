@@ -38,6 +38,18 @@
   font-size: 1.8rem;
   margin-bottom: 20px;
   text-align: center;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.goals-title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: var(--primary);
+  margin: 8px auto 0;
+  border-radius: 2px;
 }
 
 .goals {
