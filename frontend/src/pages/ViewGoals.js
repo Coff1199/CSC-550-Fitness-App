@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import GoalItem from '../components/GoalItem'
-// import the components for editing, deleting, or adding goals
 import AddGoal from '../components/AddGoal'
 import DeleteGoal from "../components/DeleteGoal";
+import EditGoal from "../components/EditGoal";
 import '../styles/goals.css';
 
 export default function ViewGoals()
@@ -12,8 +12,9 @@ Component for view goals page
 */
 {
     const [goals, setGoals] = useState([]);
-    const [selectedGoalId, setSelectedGoalId] = useState(null);
+    const [selectedGoal, setSelectedGoal] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     // access api and get the goals
     const fetchGoals = () => {
@@ -31,10 +32,15 @@ Component for view goals page
         <>
             <div className="view-goals">
                 <div className="goals-card">
-                <h1 className="goals-title">Goals page demo</h1>
+                <h1 className="goals-title">Your goals</h1>
 
                 <div className="goals">
-                    {goals.map((goal) => {
+                     {goals.length === 0 ? (
+                        <div className="empty-state">
+                            <h3>No goals yet</h3>
+                            <p>Add a goal to start your progress 🚀</p>
+                        </div>
+                    ) : goals.map((goal) => {
                         return (
                             <GoalItem 
                                 key={goal.id}
@@ -42,8 +48,12 @@ Component for view goals page
                                 goalName={goal.goalname}
                                 goalDesc={goal.goaldesc}
                                 onDeleteClick={() => {
-                                    setSelectedGoalId(goal.id);
+                                    setSelectedGoal(goal);
                                     setShowDeleteModal(true);
+                                }}
+                                onUpdateClick={() => {
+                                    setSelectedGoal(goal);
+                                    setShowEditModal(true);
                                 }}
                             />
                         );
@@ -57,7 +67,7 @@ Component for view goals page
                 />
                 {showDeleteModal && (
                 <DeleteGoal
-                    goalId={selectedGoalId}
+                    goalId={selectedGoal.id}
                     onClose={() => setShowDeleteModal(false)}
                     onGoalDeleted={() => {
                         fetchGoals();
@@ -66,7 +76,22 @@ Component for view goals page
                         }, 800);
                     }}
                 />
-            )}
+                )}
+                {showEditModal && (
+                <EditGoal
+                    goalId={selectedGoal.id}
+                    goalName={selectedGoal.goalname}
+                    goalDesc={selectedGoal.goaldesc}
+                    endDate={selectedGoal.enddate}
+                    onClose={() => setShowEditModal(false)}
+                    onGoalUpdated={() => {
+                        fetchGoals();
+                        setTimeout(() => {
+                            setShowEditModal(false);
+                        }, 800);
+                    }}
+                />
+                )}
             </div>
         </>
     );

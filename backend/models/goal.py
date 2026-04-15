@@ -14,7 +14,7 @@ class Goal(Base):
     goaldesc = Column(Text)
 
     creationdate = Column(DateTime, default=datetime.now(timezone.utc)) 
-    lastupdated = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.utcnow) 
+    lastupdated = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc)) 
     enddate = Column(Date)
 
     userid = Column(Integer, nullable=False)
