@@ -38,8 +38,6 @@ app.register_blueprint(db_bp)
 app.register_blueprint(delete_goal_bp)
 app.register_blueprint(edit_goal_bp)
 app.register_blueprint(dashboard_bp)
-app.register_blueprint(delete_goal_bp)
-app.register_blueprint(edit_goal_bp)
 app.register_blueprint(log_workout_bp)
 
 if __name__ == "__main__":
