@@ -13,8 +13,9 @@ class Goal(Base):
     goalname = Column(Text, nullable=False)
     goaldesc = Column(Text)
 
-    creationdate = Column(DateTime, default=datetime.now(timezone.utc)) 
-    lastupdated = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc)) 
+    creationdate = Column(DateTime, default=datetime.now(timezone.utc))
+    lastupdated = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     enddate = Column(Date)
 
     userid = Column(Integer, nullable=False)
+    estimated_workouts = Column(Integer, nullable=True, default=10)
