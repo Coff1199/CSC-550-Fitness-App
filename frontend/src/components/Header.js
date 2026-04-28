@@ -119,8 +119,6 @@ const Header = () => {
         )}
 
       </nav>
-
-      {/* EDIT USER MODAL */}
       {showEditUser && isAuthenticated && (
         <EditUser
           userId={user.id}
