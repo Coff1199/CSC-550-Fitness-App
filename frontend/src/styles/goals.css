@@ -187,6 +187,13 @@ button {
   transition: color var(--transition);
 }
 
+<<<<<<< HEAD
+=======
+.form-title {
+  color: var(--text);
+}
+
+>>>>>>> feature/editProfile
 .form-input,
 .form-text {
   width: 100%;
