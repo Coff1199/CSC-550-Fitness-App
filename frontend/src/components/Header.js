@@ -135,7 +135,6 @@ const Header = () => {
         />
       )}
 
-      {/* RESET PASSWORD MODAL */}
       {showResetPassword && isAuthenticated && (
         <div className="modal-overlay">
           <div className="modal">
