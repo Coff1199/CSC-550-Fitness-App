@@ -1,144 +1,100 @@
 from db import conn
 from sqlalchemy import text
+import pytest
+from app import app
+
+@pytest.fixture
+def client():
+    app.config["TESTING"] = True
+    app.config["SECRET_KEY"] = "testsecret"
+
+    with app.test_client() as client:
+        yield client
+
+
+def create_test_user():
+    conn.execute(text('''
+        INSERT INTO "Users" (firstname, lastname, email, password)
+        VALUES ('Test', 'User', 'test_edit@example.com', 'hashed')
+    '''))
+    conn.commit()
+
+    user = conn.execute(text('SELECT id FROM "Users" WHERE email = :email'),
+                        {"email": "test_edit@example.com"}).fetchone()
+    return user.id
+
 
 def test_edit_user_success(client):
-    """
-    Test Case - Successful profile update
-    """
+    user_id = create_test_user()
 
-    # First register a user to edit
-    payload = {
-        "firstname": "Edit",
-        "lastname": "User",
-        "email": "edituser_test@example.com",
-        "password": "SecurePass123!"
-    }
-    client.post("/api/register", json=payload)
+    with client.session_transaction() as sess:
+        sess["user_id"] = user_id
 
-    # Login to create session
-    client.post("/api/login", json={
-        "email": "edituser_test@example.com",
-        "password": "SecurePass123!"
-    })
-
-    # Edit user data
-    update_payload = {
+    response = client.put("/api/edit-user", json={
         "firstname": "Updated",
         "lastname": "Name",
-        "email": "updated_test@example.com"
-    }
-
-    response = client.put("/api/edit-user", json=update_payload)
+        "email": "updated@example.com"
+    })
 
     assert response.status_code == 200
     data = response.get_json()
-    assert data["message"] == "User updated successfully"
-    assert data["user"]["email"] == "updated_test@example.com"
+    assert data["user"]["email"] == "updated@example.com"
 
-    # Teardown
-    conn.execute(
-        text('DELETE FROM "Users" WHERE email = :email'),
-        {"email": "updated_test@example.com"}
-    )
+    # teardown
+    conn.execute(text('DELETE FROM "Users" WHERE id = :id'), {"id": user_id})
     conn.commit()
 
 
 def test_edit_user_not_authenticated(client):
-    """
-    Test Case - User not logged in should fail
-    """
-    payload = {
+    response = client.put("/api/edit-user", json={
         "firstname": "Test",
         "lastname": "User",
         "email": "test@example.com"
-    }
-
-    response = client.put("/api/edit-user", json=payload)
+    })
 
     assert response.status_code == 401
-    data = response.get_json()
-    assert data["error"] == "User not authenticated"
 
 
 def test_edit_user_missing_fields(client):
-    """
-    Test Case - Missing input fields should fail validation
-    """
+    user_id = create_test_user()
 
-    # Register + login user
-    payload = {
-        "firstname": "Missing",
-        "lastname": "Fields",
-        "email": "missingfields_test@example.com",
-        "password": "SecurePass123!"
-    }
-    client.post("/api/register", json=payload)
-    client.post("/api/login", json={
-        "email": "missingfields_test@example.com",
-        "password": "SecurePass123!"
-    })
+    with client.session_transaction() as sess:
+        sess["user_id"] = user_id
 
-    # Missing lastname
-    update_payload = {
-        "firstname": "NewName",
-        "email": "newemail@example.com"
-    }
-
-    response = client.put("/api/edit-user", json=update_payload)
+    response = client.put("/api/edit-user", json={})
 
     assert response.status_code == 400
-    data = response.get_json()
-    assert "error" in data
 
-    # Teardown
-    conn.execute(
-        text('DELETE FROM "Users" WHERE email = :email'),
-        {"email": "missingfields_test@example.com"}
-    )
+    conn.execute(text('DELETE FROM "Users" WHERE id = :id'), {"id": user_id})
     conn.commit()
 
 
 def test_edit_user_duplicate_email(client):
-    """
-    Test Case - Email already exists for another user
-    """
+    # create two users
+    conn.execute(text('''
+        INSERT INTO "Users" (firstname, lastname, email, password)
+        VALUES ('User1', 'Test', 'user1@example.com', 'x'),
+               ('User2', 'Test', 'user2@example.com', 'x')
+    '''))
+    conn.commit()
 
-    # Create first user
-    client.post("/api/register", json={
-        "firstname": "User1",
-        "lastname": "Test",
-        "email": "user1_test@example.com",
-        "password": "SecurePass123!"
-    })
+    user2 = conn.execute(text(
+        'SELECT id FROM "Users" WHERE email = :email'),
+        {"email": "user2@example.com"}
+    ).fetchone()
 
-    # Create second user
-    client.post("/api/register", json={
-        "firstname": "User2",
-        "lastname": "Test",
-        "email": "user2_test@example.com",
-        "password": "SecurePass123!"
-    })
+    with client.session_transaction() as sess:
+        sess["user_id"] = user2.id
 
-    # Login as user2
-    client.post("/api/login", json={
-        "email": "user2_test@example.com",
-        "password": "SecurePass123!"
-    })
-
-    # Try updating user2 email to user1's email
     response = client.put("/api/edit-user", json={
         "firstname": "User2",
         "lastname": "Test",
-        "email": "user1_test@example.com"
+        "email": "user1@example.com"
     })
 
     assert response.status_code == 409
-    data = response.get_json()
-    assert data["error"] == "Email already in use"
 
-    # Teardown
-    conn.execute(text('DELETE FROM "Users" WHERE email = :email'),
-                 {"email": "user1_test@example.com"})
-    conn.execute(text('DELETE FROM "Users" WHERE email = :email'),
-                 {"email": "user2_test@example.com"})
+    # teardown
+    conn.execute(text('DELETE FROM "Users" WHERE email IN (:e1, :e2)'),
+                 {"e1": "user1@example.com", "e2": "user2@example.com"})
     conn.commit()

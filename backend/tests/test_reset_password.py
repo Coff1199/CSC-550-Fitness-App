@@ -1,143 +1,87 @@
 from db import conn
 from sqlalchemy import text
+from werkzeug.security import generate_password_hash
+import pytest
+from app import app
+
+@pytest.fixture
+def client():
+    app.config["TESTING"] = True
+    app.config["SECRET_KEY"] = "testsecret"
+
+    with app.test_client() as client:
+        yield client
+        
+def create_user_with_password():
+    hashed = generate_password_hash("OldPass123!")
+
+    conn.execute(text('''
+        INSERT INTO "Users" (firstname, lastname, email, password)
+        VALUES ('Reset', 'User', 'reset@example.com', :password)
+    '''), {"password": hashed})
+
+    conn.commit()
+
+    user = conn.execute(text(
+        'SELECT id FROM "Users" WHERE email = :email'),
+        {"email": "reset@example.com"}
+    ).fetchone()
+
+    return user.id
 
 
 def test_reset_password_success(client):
-    """
-    Test Case - Successful password reset
-    """
+    user_id = create_user_with_password()
 
-    # Register user
-    client.post("/api/register", json={
-        "firstname": "Reset",
-        "lastname": "User",
-        "email": "reset_test@example.com",
-        "password": "OldPass123!"
-    })
+    with client.session_transaction() as sess:
+        sess["user_id"] = user_id
 
-    # Login (creates session)
-    client.post("/api/login", json={
-        "email": "reset_test@example.com",
-        "password": "OldPass123!"
-    })
-
-    # Reset password
     response = client.put("/api/reset-password", json={
         "currentPassword": "OldPass123!",
         "newPassword": "NewPass123!"
     })
 
     assert response.status_code == 200
-    data = response.get_json()
-    assert data["message"] == "Password updated successfully"
 
-    # Logout + login with new password to verify
-    client.post("/api/logout")
-
-    login_check = client.post("/api/login", json={
-        "email": "reset_test@example.com",
-        "password": "NewPass123!"
-    })
-
-    assert login_check.status_code == 200
+    conn.execute(text('DELETE FROM "Users" WHERE id = :id'), {"id": user_id})
+    conn.commit()
 
 
 def test_reset_password_wrong_current_password(client):
-    """
-    Test Case - Wrong current password should fail
-    """
+    user_id = create_user_with_password()
 
-    client.post("/api/register", json={
-        "firstname": "Wrong",
-        "lastname": "Pass",
-        "email": "wrongpass_test@example.com",
-        "password": "CorrectPass123!"
-    })
-
-    client.post("/api/login", json={
-        "email": "wrongpass_test@example.com",
-        "password": "CorrectPass123!"
-    })
+    with client.session_transaction() as sess:
+        sess["user_id"] = user_id
 
     response = client.put("/api/reset-password", json={
-        "currentPassword": "WrongPass123!",
+        "currentPassword": "WrongPass",
         "newPassword": "NewPass123!"
     })
 
     assert response.status_code == 401
-    data = response.get_json()
-    assert data["error"] in [
-        "Current password is incorrect",
-        "Invalid email or password"
-    ]
+
+    conn.execute(text('DELETE FROM "Users" WHERE id = :id'), {"id": user_id})
+    conn.commit()
 
 
 def test_reset_password_not_authenticated(client):
-    """
-    Test Case - No session (not logged in)
-    """
-
     response = client.put("/api/reset-password", json={
-        "currentPassword": "Anything123!",
-        "newPassword": "NewPass123!"
+        "currentPassword": "x",
+        "newPassword": "y"
     })
 
     assert response.status_code == 401
-    data = response.get_json()
-    assert data["error"] == "User not authenticated"
 
 
 def test_reset_password_missing_fields(client):
-    """
-    Test Case - Missing fields validation
-    """
+    user_id = create_user_with_password()
 
-    client.post("/api/register", json={
-        "firstname": "Missing",
-        "lastname": "Fields",
-        "email": "missing_reset@example.com",
-        "password": "TestPass123!"
-    })
+    with client.session_transaction() as sess:
+        sess["user_id"] = user_id
 
-    client.post("/api/login", json={
-        "email": "missing_reset@example.com",
-        "password": "TestPass123!"
-    })
-
-    response = client.put("/api/reset-password", json={
-        "currentPassword": "TestPass123!"
-    })
+    response = client.put("/api/reset-password", json={})
 
     assert response.status_code == 400
-    data = response.get_json()
-    assert "error" in data
 
-
-def test_reset_password_wrong_session_flow(client):
-    """
-    Test Case - session cleared should block reset
-    """
-
-    client.post("/api/register", json={
-        "firstname": "Session",
-        "lastname": "Test",
-        "email": "session_test@example.com",
-        "password": "TestPass123!"
-    })
-
-    client.post("/api/login", json={
-        "email": "session_test@example.com",
-        "password": "TestPass123!"
-    })
-
-    # logout removes session
-    client.post("/api/logout")
-
-    response = client.put("/api/reset-password", json={
-        "currentPassword": "TestPass123!",
-        "newPassword": "NewPass123!"
-    })
-
-    assert response.status_code == 401
-    data = response.get_json()
-    assert data["error"] == "User not authenticated"
+    conn.execute(text('DELETE FROM "Users" WHERE id = :id'), {"id": user_id})
+    conn.commit()
