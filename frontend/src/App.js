@@ -6,11 +6,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
-<<<<<<< HEAD
-import PersonalRecordsPage from .'./pages/PersonalRecordsPage';
-import StreakPage from .'./pages/StreakPage';
-=======
->>>>>>> feature/editProfile
+import PersonalRecordsPage from './pages/PersonalRecordsPage';
+import StreakPage from './pages/StreakPage';
 import LogWorkoutPage from './pages/LogWorkoutPage';
 import ViewWorkouts from './pages/ViewWorkouts';
 
@@ -32,11 +29,8 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/view_goals" element={<ProtectedRoute><ViewGoals /></ProtectedRoute>} />
-<<<<<<< HEAD
           <Route path="/personal_records" element={<ProtectedRoute><PersonalRecordsPage /></ProtectedRoute>} />
           <Route path="/streak" element={<ProtectedRoute><StreakPage /></ProtectedRoute>} />
-=======
->>>>>>> feature/editProfile
           <Route path="/log_workout" element={<ProtectedRoute><LogWorkoutPage /></ProtectedRoute>} />
           <Route path="/view-workouts" element={<ProtectedRoute><ViewWorkouts /></ProtectedRoute>} />
         </Routes>

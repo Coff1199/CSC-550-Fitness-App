@@ -4,6 +4,16 @@ import { Link } from 'react-router-dom';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
+
 const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,7 +51,6 @@ const DashboardPage = () => {
     );
   }
 
-<<<<<<< HEAD
   const cardStyle = {
     background: '#1e2a3a',
     borderRadius: '12px',
@@ -57,12 +66,10 @@ const DashboardPage = () => {
     padding: '1.5rem',
     marginBottom: '1.5rem',
   };
-=======
-  const hasWorkouts = data.totalWorkouts > 0;
+
+  const hasWorkouts = data?.totalWorkouts > 0;
   const goalProgress = data.goalProgress || [];
-  // Top goal is already first — sorted by workout count DESC from the API
   const mostActiveGoal = goalProgress.length > 0 ? goalProgress[0] : null;
->>>>>>> workout-edit-delete
 
   return (
     <div style={{ padding: '2rem', color: '#fff', maxWidth: '1100px', margin: '0 auto' }}>
@@ -76,6 +83,7 @@ const DashboardPage = () => {
           </div>
           <div style={{ color: '#9ca3af', marginTop: '0.25rem' }}>Total Workouts</div>
         </div>
+
         <div style={cardStyle}>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#4fc3f7' }}>
             {data.activeGoalsCount}
@@ -83,7 +91,6 @@ const DashboardPage = () => {
           <div style={{ color: '#9ca3af', marginTop: '0.25rem' }}>Active Goals</div>
         </div>
 
-        {/* Streak Cards */}
         <div style={{ ...cardStyle, borderLeft: '3px solid #f97316' }}>
           <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🔥</div>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#f97316' }}>
@@ -93,6 +100,7 @@ const DashboardPage = () => {
             Day{data.currentStreak !== 1 ? 's' : ''} Streak
           </div>
         </div>
+
         <div style={{ ...cardStyle, borderLeft: '3px solid #a78bfa' }}>
           <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🏅</div>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#a78bfa' }}>
@@ -105,27 +113,33 @@ const DashboardPage = () => {
       {/* ── Workouts by Goal Chart ── */}
       {data.workoutsByGoal && data.workoutsByGoal.length > 0 && (
         <div style={sectionStyle}>
-          <h2 style={{ marginBottom: '1rem', color: '#9ca3af', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <h2 style={{
+            marginBottom: '1rem',
+            color: '#9ca3af',
+            fontSize: '1rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
+          }}>
             Workouts by Goal
           </h2>
+
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={data.workoutsByGoal}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="goalName" stroke="#9ca3af" tick={{ fontSize: 12 }} />
               <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{ background: '#1e2a3a', border: '1px solid #374151', borderRadius: '8px' }}
-                labelStyle={{ color: '#fff' }}
-                itemStyle={{ color: '#4fc3f7' }}
-              />
+              <Tooltip />
               <Bar dataKey="count" fill="#4fc3f7" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
-      {/* ── Goal Progress Rings (always visible when goals exist) ── */}
+      )}
+
+      {/* ── Goal Progress Rings ── */}
       {goalProgress.length > 0 ? (
         <div style={{ backgroundColor: '#1f2937', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
           <h2 style={{ color: '#fff', marginBottom: '1.5rem' }}>Goal Progress</h2>
+
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
@@ -146,9 +160,11 @@ const DashboardPage = () => {
                     })}
                   />
                 </div>
+
                 <div style={{ color: '#ffffff', fontWeight: '600', marginBottom: '4px', fontSize: '0.95rem' }}>
                   {goal.goalName}
                 </div>
+
                 <div style={{ color: '#9ca3af', fontSize: '0.82rem' }}>
                   {goal.workoutCount} of {goal.estimatedWorkouts} workouts
                 </div>
@@ -162,83 +178,10 @@ const DashboardPage = () => {
             No goals yet.{' '}
             <Link to="/view_goals" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '600' }}>
               Add a goal
-            </Link>{' '}
-            to start tracking progress!
+            </Link>
           </p>
         </div>
       )}
-
-      {/* ── Recent Workouts Table (only when workouts exist) ── */}
-      {hasWorkouts && (
-        <div style={{ backgroundColor: '#1f2937', padding: '1.5rem', borderRadius: '8px' }}>
-          <h2 style={{ color: '#fff', marginBottom: '1rem' }}>Recent Workouts</h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #374151' }}>
-                <th style={{ padding: '0.75rem', textAlign: 'left', color: '#9ca3af' }}>Date</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left', color: '#9ca3af' }}>Goal</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left', color: '#9ca3af' }}>Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.recentWorkouts.map((workout, idx) => (
-                <tr
-                  key={workout.id}
-                  style={{
-                    borderBottom: '1px solid #374151',
-                    backgroundColor: idx % 2 === 0 ? '#1f2937' : '#111827'
-                  }}
-                >
-                  <td style={{ padding: '0.75rem', color: '#fff' }}>{workout.date}</td>
-                  <td style={{ padding: '0.75rem', color: '#fff' }}>{workout.goalName || 'No goal'}</td>
-                  <td style={{ padding: '0.75rem', color: '#9ca3af' }}>{workout.notes || '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* ── Personal Records ── */}
-      <div style={sectionStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h2 style={{ color: '#9ca3af', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
-            🏆 Top Personal Records
-          </h2>
-          <Link to="/personal_records" style={{ color: '#4fc3f7', fontSize: '0.875rem', textDecoration: 'none' }}>
-            View All →
-          </Link>
-        </div>
-        {data.topPersonalRecords && data.topPersonalRecords.length > 0 ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-            {data.topPersonalRecords.map((pr, idx) => (
-              <div key={idx} style={{
-                background: '#0f172a',
-                borderRadius: '8px',
-                padding: '0.75rem 1rem',
-                flex: '1',
-                minWidth: '150px',
-                borderLeft: '3px solid #fbbf24',
-              }}>
-                <div style={{ fontWeight: 'bold', color: '#fbbf24', marginBottom: '0.25rem' }}>
-                  {pr.exercise}
-                </div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#fff' }}>
-                  {pr.value} <span style={{ fontSize: '0.875rem', color: '#9ca3af' }}>{pr.unit}</span>
-                </div>
-                <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
-                  {pr.achieved_on}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p style={{ color: '#6b7280' }}>
-            No personal records yet.{' '}
-            <Link to="/personal_records" style={{ color: '#4fc3f7' }}>Log your first PR →</Link>
-          </p>
-        )}
-      </div>
 
       {/* ── Recent Workouts ── */}
       <div style={sectionStyle}>
@@ -246,10 +189,12 @@ const DashboardPage = () => {
           <h2 style={{ color: '#9ca3af', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
             Recent Workouts
           </h2>
+
           <Link to="/log_workout" style={{ color: '#4fc3f7', fontSize: '0.875rem', textDecoration: 'none' }}>
             + Log Workout
           </Link>
         </div>
+
         {data.recentWorkouts && data.recentWorkouts.length > 0 ? (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
@@ -259,12 +204,16 @@ const DashboardPage = () => {
                 <th style={{ padding: '0.75rem', textAlign: 'left', color: '#9ca3af' }}>Notes</th>
               </tr>
             </thead>
+
             <tbody>
               {data.recentWorkouts.map((workout, idx) => (
-                <tr key={workout.id} style={{
-                  borderBottom: '1px solid #374151',
-                  backgroundColor: idx % 2 === 0 ? '#0f172a' : 'transparent'
-                }}>
+                <tr
+                  key={workout.id}
+                  style={{
+                    borderBottom: '1px solid #374151',
+                    backgroundColor: idx % 2 === 0 ? '#0f172a' : 'transparent'
+                  }}
+                >
                   <td style={{ padding: '0.75rem', color: '#fff' }}>{workout.date}</td>
                   <td style={{ padding: '0.75rem', color: '#fff' }}>{workout.goalName || 'No goal'}</td>
                   <td style={{ padding: '0.75rem', color: '#9ca3af' }}>{workout.notes || '-'}</td>
