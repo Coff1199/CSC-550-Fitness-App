@@ -11,7 +11,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
+.pytest_cache
 # Build caches
 frontend/node_modules/.cache/
 backend/__pycache__/
