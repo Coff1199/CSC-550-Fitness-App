@@ -21,6 +21,7 @@ def create_goal():
     goal_name = data.get("goalName")
     goal_desc = data.get("goalDesc", "")
     end_date = data.get("endDate")
+    estimated_workouts = data.get("estimatedWorkouts", 10)
 
     # check user logged in
     if 'user_id' not in session:
@@ -47,13 +48,18 @@ def create_goal():
     if len(goal_desc) > 255:
         return jsonify({"error": "Too long"}), 400
 
+    # validate estimated_workouts
+    if not isinstance(estimated_workouts, int) or estimated_workouts < 1:
+        return jsonify({"error": "estimatedWorkouts must be a positive integer"}), 400
+
     try:
         # create a new goal
         new_goal = Goal(
             goalname=goal_name,
             goaldesc=goal_desc,
             userid=user_id,
-            enddate=datetime.strptime(end_date, "%Y-%m-%d") if end_date else None
+            enddate=datetime.strptime(end_date, "%Y-%m-%d") if end_date else None,
+            estimated_workouts=estimated_workouts
         )
 
         # connect to session
@@ -71,7 +77,8 @@ def create_goal():
             "creationdate": new_goal.creationdate,
             "lastupdated": new_goal.lastupdated,
             "enddate": new_goal.enddate,
-            "userid": new_goal.userid
+            "userid": new_goal.userid,
+            "estimated_workouts": new_goal.estimated_workouts
         }), 201
 
     except Exception as e:

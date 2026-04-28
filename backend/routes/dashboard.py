@@ -22,13 +22,35 @@ def get_dashboard():
     # Query 2: Workouts by goal
     workouts_by_goal = conn.execute(text('''
         SELECT g.goalname, COUNT(w.id) as count
+    
+    # Query 2: Top 3 goals by workout count with progress data
+    goal_progress_rows = conn.execute(text('''
+        SELECT
+            g.id,
+            g.goalname,
+            COALESCE(g.estimated_workouts, 10) AS estimated_workouts,
+            COUNT(w.id) AS workout_count
         FROM "Goals" g
         LEFT JOIN "Workouts" w ON g.id = w.goal_id AND w.user_id = :uid
         WHERE g.userid = :uid
-        GROUP BY g.goalname
+        GROUP BY g.id, g.goalname, g.estimated_workouts
+        ORDER BY workout_count DESC
+        LIMIT 3
     '''), {'uid': user_id}).fetchall()
 
     workouts_by_goal_list = [{'goalName': row[0], 'count': row[1]} for row in workouts_by_goal]
+    goal_progress_list = []
+    for row in goal_progress_rows:
+        est = row[2] if row[2] and row[2] > 0 else 10
+        count = row[3]
+        pct = min(round((count / est) * 100, 1), 100)
+        goal_progress_list.append({
+            'id': row[0],
+            'goalName': row[1],
+            'estimatedWorkouts': est,
+            'workoutCount': count,
+            'progressPct': pct
+        })
 
     # Query 3: Recent workouts
     recent_workouts = conn.execute(text('''
@@ -105,7 +127,7 @@ def get_dashboard():
 
     return jsonify({
         'totalWorkouts': total_workouts,
-        'workoutsByGoal': workouts_by_goal_list,
+        'goalProgress': goal_progress_list,
         'recentWorkouts': recent_workouts_list,
         'activeGoalsCount': active_goals_count,
         'currentStreak': current_streak,

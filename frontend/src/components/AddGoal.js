@@ -11,6 +11,7 @@ function AddGoal(props) {
     const [goalName, setGoalName] = useState('');
     const [goalDesc, setGoalDesc] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [estimatedWorkouts, setEstimatedWorkouts] = useState(10);
 
     const [show, setShow] = useState(false);
     const [error, setError] = useState('');
@@ -46,6 +47,12 @@ function AddGoal(props) {
         return;
     }
 
+    const estNum = parseInt(estimatedWorkouts, 10);
+    if (isNaN(estNum) || estNum < 1) {
+        setError('Estimated workouts must be a positive number');
+        return;
+    }
+
     try {
         // send response
         const response = await fetch('http://localhost:5000/api/add_goal', {
@@ -58,7 +65,8 @@ function AddGoal(props) {
                 goalName,
                 goalDesc,
                 userId: props.userId,
-                endDate
+                endDate,
+                estimatedWorkouts: parseInt(estimatedWorkouts, 10)
             }),
         });
 
@@ -73,6 +81,7 @@ function AddGoal(props) {
         setGoalName('');
         setGoalDesc('');
         setEndDate('');
+        setEstimatedWorkouts(10);
 
         if (props.onGoalAdded) {
             props.onGoalAdded(data);
@@ -146,6 +155,21 @@ function AddGoal(props) {
                                 type="date"
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
+                            />
+
+                            <label
+                                htmlFor="estimatedWorkouts"
+                                className="form-label"
+                            >
+                                Estimated Workouts
+                            </label>
+                            <input
+                                id="estimatedWorkouts"
+                                className="form-input"
+                                type="number"
+                                min="1"
+                                value={estimatedWorkouts}
+                                onChange={(e) => setEstimatedWorkouts(e.target.value)}
                             />
 
                             <div className="form-buttons">

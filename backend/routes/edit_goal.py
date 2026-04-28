@@ -21,6 +21,7 @@ def edit_goal():
     goal_name = data.get("goalName")
     goal_desc = data.get("goalDesc", "")
     end_date = data.get("endDate")
+    estimated_workouts = data.get("estimatedWorkouts")
 
     # check logged in
     if 'user_id' not in session:
@@ -39,6 +40,10 @@ def edit_goal():
     if len(goal_name) > 255 or len(goal_desc) > 255:
         return jsonify({"error": "Too long"}), 400
 
+    if estimated_workouts is not None:
+        if not isinstance(estimated_workouts, int) or estimated_workouts < 1:
+            return jsonify({"error": "estimatedWorkouts must be a positive integer"}), 400
+
     db = SessionLocal()
 
     try:
@@ -56,8 +61,10 @@ def edit_goal():
         goal.goalname = goal_name
         goal.goaldesc = goal_desc
         goal.enddate = datetime.strptime(end_date, "%Y-%m-%d") if end_date else None
+        if estimated_workouts is not None:
+            goal.estimated_workouts = estimated_workouts
 
-       # auto updates lastUpdatedin goal model
+        # auto updates lastupdated in goal model
         db.commit()
         db.refresh(goal)
 
@@ -70,7 +77,8 @@ def edit_goal():
                 "creationdate": goal.creationdate,
                 "lastupdated": goal.lastupdated,
                 "enddate": goal.enddate,
-                "userid": goal.userid
+                "userid": goal.userid,
+                "estimated_workouts": goal.estimated_workouts
             }
         }), 200
 

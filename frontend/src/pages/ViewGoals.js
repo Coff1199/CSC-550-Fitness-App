@@ -83,6 +83,7 @@ Component for view goals page
                     goalName={selectedGoal.goalname}
                     goalDesc={selectedGoal.goaldesc}
                     endDate={selectedGoal.enddate}
+                    estimatedWorkouts={selectedGoal.estimated_workouts ?? 10}
                     onClose={() => setShowEditModal(false)}
                     onGoalUpdated={() => {
                         fetchGoals();

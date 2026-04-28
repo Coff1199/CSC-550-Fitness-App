@@ -21,6 +21,7 @@ const Header = () => {
             <>
               <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
               <Link to="/view_goals" style={{ color: '#fff', textDecoration: 'none' }}>View Goals</Link>
+              <Link to="/view-workouts" style={{ color: '#fff', textDecoration: 'none' }}>View Workouts</Link>
             </>
           )}
         </div>
