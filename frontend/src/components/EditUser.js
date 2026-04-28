@@ -4,40 +4,39 @@ import { useAuth } from '../context/AuthContext';
 function EditUser(props) {
     const { user } = useAuth();
 
-    const [firstname, setFirstname] = useState(props.firstname || '');
-    const [lastname, setLastname] = useState(props.lastname || '');
-    const [email, setEmail] = useState(props.email || '');
+    const [firstname, setFirstname] = useState('');
+    const [lastname, setLastname] = useState('');
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
     useEffect(() => {
-        setFirstname(props.firstname || '');
-        setLastname(props.lastname || '');
-        setEmail(props.email || '');
-    }, [props.userId]);
+        if (user) {
+            const nameParts = user.name?.split(' ') || [];
+            setFirstname(nameParts[0] || '');
+            setLastname(nameParts[1] || '');
+        }
+    }, [user]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-        if (!firstname.trim() || !lastname.trim() || !email.trim()) {
+        if (!firstname.trim() || !lastname.trim()) {
             setError('All fields are required');
             return;
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/edit_user', {
+            const response = await fetch('http://localhost:5000/api/edit-user', {
                 method: 'PUT',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    userId: props.userId,
                     firstname,
-                    lastname,
-                    email,
+                    lastname
                 }),
             });
 
@@ -47,10 +46,15 @@ function EditUser(props) {
                 throw new Error(data.error || 'Failed to update user');
             }
 
-            setSuccess('Profile updated successfully!');
-            setError('');
+           setSuccess('Profile updated successfully!');
+           setError('');
+           setTimeout(() => {
+                if (props.onUserUpdated) {
+                    props.onUserUpdated();
+                }
+                props.onClose();
+            }, 800);
 
-            props.onUserUpdated();
         } catch (err) {
             setError(err.message);
         }
@@ -88,13 +92,6 @@ function EditUser(props) {
                             className="form-input"
                             value={lastname}
                             onChange={(e) => setLastname(e.target.value)}
-                        />
-
-                        <label className="form-label">Email</label>
-                        <input
-                            className="form-input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
                         />
 
                         <div className="form-buttons">

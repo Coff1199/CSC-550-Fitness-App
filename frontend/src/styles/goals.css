@@ -187,6 +187,10 @@ button {
   transition: color var(--transition);
 }
 
+.form-title {
+  color: var(--text);
+}
+
 .form-input,
 .form-text {
   width: 100%;
