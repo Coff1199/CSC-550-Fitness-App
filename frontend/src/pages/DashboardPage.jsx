@@ -4,15 +4,7 @@ import { Link } from 'react-router-dom';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts';
+
 
 const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
@@ -110,30 +102,6 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* ── Workouts by Goal Chart ── */}
-      {data.workoutsByGoal && data.workoutsByGoal.length > 0 && (
-        <div style={sectionStyle}>
-          <h2 style={{
-            marginBottom: '1rem',
-            color: '#9ca3af',
-            fontSize: '1rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em'
-          }}>
-            Workouts by Goal
-          </h2>
-
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={data.workoutsByGoal}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="goalName" stroke="#9ca3af" tick={{ fontSize: 12 }} />
-              <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#4fc3f7" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
 
       {/* ── Goal Progress Rings ── */}
       {goalProgress.length > 0 ? (
